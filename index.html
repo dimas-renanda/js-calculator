@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Calculator</title>
+<style>
+  body{margin:0;background:#1a1a2e;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif}
+  .calc{background:#16213e;border-radius:20px;padding:1.5rem;box-shadow:0 20px 60px rgba(0,0,0,.5);width:280px}
+  #display{background:#0f3460;border-radius:10px;padding:1rem;text-align:right;margin-bottom:1rem}
+  #expr{color:#888;font-size:.85rem;min-height:1.2em;word-break:break-all}
+  #val{color:#e94560;font-size:2.5rem;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}
+  button{padding:1rem;border:none;border-radius:10px;font-size:1.1rem;cursor:pointer;transition:all .15s;font-weight:600}
+  .num{background:#1a4a7a;color:#fff}.num:hover{background:#1d5a8e}
+  .op{background:#0f3460;color:#e94560}.op:hover{background:#164070}
+  .eq{background:#e94560;color:#fff;grid-column:span 2}.eq:hover{background:#c73652}
+  .clear{background:#e74c3c;color:#fff}.clear:hover{background:#c0392b}
+  .zero{grid-column:span 2}
+</style>
+</head>
+<body>
+<div class="calc">
+  <div id="display"><div id="expr"></div><div id="val">0</div></div>
+  <div class="grid">
+    <button class="clear" onclick="cls()">AC</button>
+    <button class="op" onclick="sign()">+/-</button>
+    <button class="op" onclick="pct()">%</button>
+    <button class="op" onclick="op('/')">÷</button>
+    <button class="num" onclick="num(7)">7</button><button class="num" onclick="num(8)">8</button><button class="num" onclick="num(9)">9</button>
+    <button class="op" onclick="op('*')">×</button>
+    <button class="num" onclick="num(4)">4</button><button class="num" onclick="num(5)">5</button><button class="num" onclick="num(6)">6</button>
+    <button class="op" onclick="op('-')">−</button>
+    <button class="num" onclick="num(1)">1</button><button class="num" onclick="num(2)">2</button><button class="num" onclick="num(3)">3</button>
+    <button class="op" onclick="op('+')">+</button>
+    <button class="num zero" onclick="num(0)">0</button>
+    <button class="num" onclick="dot()">.</button>
+    <button class="eq" onclick="eq()">=</button>
+  </div>
+</div>
+<script>
+let cur='0',prev='',oper=null,fresh=true;
+const vEl=document.getElementById('val'),eEl=document.getElementById('expr');
+function render(){vEl.textContent=cur}
+function num(n){if(fresh){cur=String(n);fresh=false}else cur=cur==='0'?String(n):cur+n;render()}
+function dot(){if(fresh){cur='0.';fresh=false}else if(!cur.includes('.'))cur+='.';render()}
+function cls(){cur='0';prev='';oper=null;fresh=true;eEl.textContent='';render()}
+function sign(){cur=String(-parseFloat(cur));render()}
+function pct(){cur=String(parseFloat(cur)/100);render()}
+function op(o){
+  if(oper&&!fresh)calc();
+  prev=cur;oper=o;fresh=true;
+  eEl.textContent=prev+' '+({'+':'+','-':'−','*':'×','/':'÷'}[o]||o);
+}
+function calc(){
+  if(!oper)return;
+  const a=parseFloat(prev),b=parseFloat(cur);
+  let r;
+  if(oper==='+')r=a+b;else if(oper==='-')r=a-b;else if(oper==='*')r=a*b;else if(oper==='/')r=b===0?'Error':a/b;
+  eEl.textContent=prev+' '+({'+':'+','-':'−','*':'×','/':'÷'}[oper])+' '+cur+' =';
+  cur=String(r);oper=null;fresh=true;render();
+}
+function eq(){calc()}
+</script>
+</body></html>
